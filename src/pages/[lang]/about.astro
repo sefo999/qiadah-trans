@@ -1,0 +1,146 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Stats from '../../components/Stats.astro';
+import Icon from '../../components/Icon.astro';
+import Process from '../../components/Process.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { t } from '../../i18n/ui';
+import { staticLangPaths, type Lang } from '../../i18n/utils';
+import { values } from '../../data/site';
+import { images } from '../../data/images';
+
+export const getStaticPaths = staticLangPaths;
+const lang = Astro.params.lang as Lang;
+const tr = t(lang);
+---
+
+<Base lang={lang} title={tr('meta.about')} description={tr('about.p1')} slug="about">
+  <PageHero lang={lang} eyebrow={tr('about.eyebrow')} title={tr('about.title')} text={tr('about.p1')} crumbs={[{ label: tr('nav.about') }]} image={images.hopperRow} focus="50% 70%" />
+
+  <section class="section about">
+    <div class="container about__inner">
+      <div class="about__media reveal">
+        <Image src={images.sitrak} alt="" width={960} height={720} format="webp" quality={72} loading="lazy" />
+      </div>
+      <div class="about__copy reveal" data-delay="1">
+        <span class="eyebrow">{lang === 'ar' ? 'قيادة للنقليات' : 'Qiadah Logistics'}</span>
+        <h2 class="h2">{lang === 'ar' ? 'نبذة عن الشركة' : 'About the company'}</h2>
+        <p class="lead">{tr('about.p2')}</p>
+        <p class="about__motto">{lang === 'ar' ? 'شريك في كل طريق' : 'A partner on every road'}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--cream vm contour">
+    <div class="container grid grid-2">
+      <div class="vm__card vm__card--navy reveal">
+        <span class="vm__icon"><Icon name="vision" /></span>
+        <h2 class="h3">{tr('about.vision')}</h2>
+        <p>{tr('about.vision.text')}</p>
+      </div>
+      <div class="vm__card reveal" data-delay="1">
+        <span class="vm__icon"><Icon name="check" /></span>
+        <h2 class="h3">{tr('about.mission')}</h2>
+        <p>{tr('about.mission.text')}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head section-head--center reveal">
+        <span class="eyebrow">{tr('about.values')}</span>
+        <h2 class="h2">{lang === 'ar' ? 'ما نؤمن به في كل رحلة' : 'What we believe in on every trip'}</h2>
+      </div>
+      <div class="grid grid-4">
+        {values.map((v, i) => (
+          <div class="card reveal" data-delay={String(i + 1)}>
+            <span class="card__icon"><Icon name={v.icon} /></span>
+            <h3 class="h3">{v.title[lang]}</h3>
+            <p>{v.text[lang]}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--navy contour contour--dark">
+    <div class="container">
+      <div class="section-head section-head--center reveal">
+        <span class="eyebrow">{tr('about.numbers')}</span>
+        <h2 class="h2">{lang === 'ar' ? 'أسطول حديث ومتنوع' : 'A modern, diverse fleet'}</h2>
+      </div>
+      <Stats lang={lang} dark />
+    </div>
+  </section>
+
+  <Process lang={lang} />
+  <CtaBand lang={lang} />
+</Base>
+
+<style>
+  .about__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: center;
+  }
+  .about__media {
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+  .about__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .about__motto {
+    margin-top: 24px;
+    font-weight: 700;
+    color: var(--gold);
+    font-size: 1.2rem;
+  }
+  .vm__card {
+    background: #fff;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    padding: 36px;
+  }
+  .vm__card--navy {
+    background: var(--navy);
+    color: #fff;
+    border-color: transparent;
+  }
+  .vm__card--navy h2 {
+    color: #fff;
+  }
+  .vm__card p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+  .vm__card:not(.vm__card--navy) p {
+    color: var(--muted);
+  }
+  .vm__icon {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    background: var(--gold);
+    color: var(--navy-ink);
+    margin-bottom: 18px;
+  }
+  .vm__icon :global(svg) {
+    width: 28px;
+    height: 28px;
+  }
+  @media (max-width: 900px) {
+    .about__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

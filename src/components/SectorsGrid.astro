@@ -1,0 +1,135 @@
+---
+import Icon from './Icon.astro';
+import { t } from '../i18n/ui';
+import { path, type Lang } from '../i18n/utils';
+import { sectors } from '../data/sectors';
+
+interface Props {
+  lang: Lang;
+  heading?: boolean;
+  exclude?: string;
+  cream?: boolean;
+}
+const { lang, heading = true, exclude, cream = true } = Astro.props;
+const tr = t(lang);
+const list = sectors.filter((s) => s.slug !== exclude);
+---
+
+<section class:list={['section', 'sectors', { 'section--cream': cream }]} id="sectors">
+  <div class="container">
+    {heading && (
+      <div class="section-head section-head--center reveal">
+        <span class="eyebrow">{tr('sectors.eyebrow')}</span>
+        <h2 class="h2">{tr('sectors.title')}</h2>
+        <p class="lead">{tr('sectors.text')}</p>
+      </div>
+    )}
+    <div class="sectors__grid">
+      {list.map((s, i) => (
+        <a href={path(lang, `sectors/${s.slug}`)} class="sector reveal" data-delay={String((i % 4) + 1)}>
+          <span class="sector__icon"><Icon name={s.icon} /></span>
+          <h3>{s.title[lang]}</h3>
+          <p>{s.short[lang]}</p>
+          <span class="sector__arrow"><Icon name="arrow" /></span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .sectors__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px;
+  }
+  .sector {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 26px 24px 26px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .sector::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--gold);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.3s ease;
+  }
+  .sector:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: transparent;
+  }
+  .sector:hover::before {
+    transform: scaleY(1);
+  }
+  .sector__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    background: var(--navy);
+    color: var(--gold-light);
+    margin-bottom: 6px;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  .sector:hover .sector__icon {
+    background: var(--gold);
+    color: var(--navy-ink);
+  }
+  .sector__icon :global(svg) {
+    width: 28px;
+    height: 28px;
+  }
+  .sector h3 {
+    font-size: 1.15rem;
+  }
+  .sector p {
+    font-size: 0.93rem;
+    color: var(--muted);
+    flex: 1;
+  }
+  .sector__arrow {
+    position: absolute;
+    inset-inline-end: 18px;
+    top: 22px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    color: var(--navy);
+    transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+  }
+  .sector__arrow :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+  html[dir='rtl'] .sector__arrow :global(svg) {
+    transform: scaleX(-1);
+  }
+  .sector:hover .sector__arrow {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+  @media (max-width: 560px) {
+    .sectors__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

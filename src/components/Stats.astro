@@ -1,0 +1,88 @@
+---
+import Icon from './Icon.astro';
+import type { Lang } from '../i18n/utils';
+import { stats } from '../data/site';
+
+interface Props {
+  lang: Lang;
+  dark?: boolean;
+}
+const { lang, dark = false } = Astro.props;
+---
+
+<ul class:list={['stats', { 'stats--dark': dark }]}>
+  {stats.map((s, i) => (
+    <li class="reveal" data-delay={String(i + 1)}>
+      <span class="stats__icon"><Icon name={s.icon} /></span>
+      <strong class="num" data-count={s.value} data-suffix={s.suffix}>0{s.suffix}</strong>
+      <span class="stats__label">{s.label[lang]}</span>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+  }
+  .stats li {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 26px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .stats--dark li {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  .stats__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: var(--gold-pale);
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .stats--dark .stats__icon {
+    background: rgba(201, 150, 47, 0.2);
+    color: var(--gold-light);
+  }
+  .stats__icon :global(svg) {
+    width: 24px;
+    height: 24px;
+  }
+  .stats strong {
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.1;
+  }
+  .stats--dark strong {
+    color: var(--gold-light);
+  }
+  .stats__label {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+  .stats--dark .stats__label {
+    color: rgba(255, 255, 255, 0.75);
+  }
+  @media (max-width: 1024px) {
+    .stats {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (max-width: 560px) {
+    .stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,227 @@
+---
+import Icon from './Icon.astro';
+import { t } from '../i18n/ui';
+import type { Lang } from '../i18n/utils';
+import { bahrain, gcc, gccLabels, ksa, pins, project } from '../data/map';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const tr = t(lang);
+const poly = (pts: [number, number][]) => pts.map(([lon, lat]) => project(lon, lat).join(',')).join(' ');
+const [bx, by] = project(bahrain[0], bahrain[1]);
+const ports = pins.filter((p) => p.kind === 'port');
+const cities = pins.filter((p) => p.kind !== 'port');
+// SVG text-anchor is logical in RTL, so flip start/end for Arabic.
+const anchorFor = (a: 'start' | 'middle' | 'end', dx: number) => {
+  if (a === 'middle') return 'middle';
+  return dx >= 0 ? 'start' : 'end';
+};
+---
+
+<section class="section coverage" id="coverage">
+  <div class="container coverage__inner">
+    <div class="coverage__copy">
+      <div class="section-head reveal">
+        <span class="eyebrow">{tr('coverage.eyebrow')}</span>
+        <h2 class="h2">{tr('coverage.title')}</h2>
+        <p class="lead">{tr('coverage.text')}</p>
+      </div>
+      <div class="coverage__lists reveal" data-delay="1">
+        <div>
+          <h3><Icon name="ship" />{tr('coverage.ports')}</h3>
+          <ul>{ports.map((p) => <li>{p.name[lang]}</li>)}</ul>
+        </div>
+        <div>
+          <h3><Icon name="pin" />{tr('coverage.cities')}</h3>
+          <ul>{cities.map((p) => <li>{p.name[lang]}</li>)}</ul>
+        </div>
+        <div>
+          <h3><Icon name="globe" />{tr('coverage.gcc')}</h3>
+          <ul>{gccLabels.map((g) => <li>{g.name[lang]}</li>)}</ul>
+        </div>
+      </div>
+    </div>
+
+    <figure class="coverage__map reveal" data-delay="2">
+      <svg viewBox="-10 30 800 480" role="img" aria-label={tr('coverage.title')} direction="ltr">
+        <defs>
+          <pattern id="dots" width="9" height="9" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1.1" fill="#1f2a5c" opacity="0.16" />
+          </pattern>
+          <radialGradient id="pulse">
+            <stop offset="0" stop-color="#c9962f" stop-opacity="0.55" />
+            <stop offset="1" stop-color="#c9962f" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        {Object.values(gcc).map((g) => (
+          <polygon points={poly(g)} fill="#eef0f7" stroke="#1f2a5c" stroke-opacity="0.3" stroke-width="1.4" stroke-linejoin="round" />
+        ))}
+        <circle cx={bx} cy={by} r="4.5" fill="#eef0f7" stroke="#1f2a5c" stroke-opacity="0.3" stroke-width="1.4" />
+        <polygon points={poly(ksa)} fill="#f7f4ee" stroke="#1f2a5c" stroke-width="2.4" stroke-linejoin="round" />
+        <polygon points={poly(ksa)} fill="url(#dots)" />
+
+        {gccLabels.map((g) => {
+          const [x, y] = project(g.lon, g.lat);
+          return <text class="lbl lbl--gcc" x={x} y={y} text-anchor="middle">{g.name[lang]}</text>;
+        })}
+
+        {pins.map((p) => {
+          const [x, y] = project(p.lon, p.lat);
+          const big = p.kind !== 'city';
+          const anchor = anchorFor(p.anchor, p.dx);
+          return (
+            <g class="pin" data-kind={p.kind}>
+              {big && <circle cx={x} cy={y} r="18" fill="url(#pulse)" class="pin__pulse" />}
+              <circle cx={x} cy={y} r={big ? 6.5 : 4.2} fill={p.kind === 'port' ? '#c9962f' : p.kind === 'dry' ? '#1f2a5c' : '#fff'} stroke={p.kind === 'city' ? '#1f2a5c' : '#fff'} stroke-width={big ? 2.2 : 1.8} />
+              {big && (
+                <text class="lbl lbl--big" x={x + p.dx} y={y + p.dy} text-anchor={anchor}>
+                  {p.name[lang]}
+                </text>
+              )}
+              {!big && <title>{p.name[lang]}</title>}
+            </g>
+          );
+        })}
+      </svg>
+      <figcaption class="coverage__legend">
+        <span><i class="legend legend--port"></i>{tr('coverage.legend.port')}</span>
+        <span><i class="legend legend--dry"></i>{tr('coverage.legend.dry')}</span>
+        <span><i class="legend legend--city"></i>{tr('coverage.legend.city')}</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .coverage__inner {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+  }
+  .coverage__lists {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .coverage__lists h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: var(--gold);
+  }
+  .coverage__lists h3 :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+  .coverage__lists li {
+    font-size: 0.92rem;
+    color: var(--muted);
+    padding: 3px 0;
+  }
+  .coverage__map {
+    margin: 0;
+    background: linear-gradient(160deg, #fff, var(--cream));
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+  }
+  .coverage__map svg {
+    width: 100%;
+    height: auto;
+    font-family: inherit;
+    overflow: visible;
+  }
+  .lbl {
+    font-size: 11.5px;
+    font-weight: 600;
+    fill: #1f2a5c;
+    paint-order: stroke fill;
+    stroke: #fff;
+    stroke-width: 4px;
+    stroke-linejoin: round;
+    dominant-baseline: middle;
+  }
+  .lbl--big {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .lbl--gcc {
+    font-size: 12px;
+    font-weight: 700;
+    fill: #5b6478;
+  }
+  .pin__pulse {
+    transform-origin: center;
+    transform-box: fill-box;
+    animation: pulse 2.6s ease-out infinite;
+  }
+  @keyframes pulse {
+    0% {
+      transform: scale(0.35);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1.5);
+      opacity: 0;
+    }
+  }
+  .coverage__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .coverage__legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .legend--port {
+    background: var(--gold);
+  }
+  .legend--dry {
+    background: var(--navy);
+  }
+  .legend--city {
+    background: #fff;
+    border: 2px solid var(--navy);
+  }
+  @media (max-width: 1024px) {
+    .coverage__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .coverage__lists {
+      grid-template-columns: 1fr 1fr;
+    }
+    .coverage__map {
+      padding: 12px;
+    }
+    .lbl {
+      font-size: 13px;
+    }
+    .lbl--big {
+      font-size: 14px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pin__pulse {
+      animation: none;
+    }
+  }
+</style>

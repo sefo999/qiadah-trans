@@ -1,0 +1,102 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import { t } from '../../i18n/ui';
+import { staticLangPaths, type Lang } from '../../i18n/utils';
+import { site } from '../../data/site';
+import { images } from '../../data/images';
+
+export const getStaticPaths = staticLangPaths;
+const lang = Astro.params.lang as Lang;
+const tr = t(lang);
+const why = [tr('careers.why.1'), tr('careers.why.2'), tr('careers.why.3'), tr('careers.why.4')];
+---
+
+<Base lang={lang} title={tr('meta.careers')} description={tr('careers.text')} slug="careers">
+  <PageHero lang={lang} eyebrow={tr('careers.eyebrow')} title={tr('careers.title')} text={tr('careers.text')} crumbs={[{ label: tr('nav.careers') }]} image={images.sitrak} focus="50% 60%" />
+
+  <section class="section careers">
+    <div class="container careers__inner">
+      <div>
+        <div class="careers__media reveal">
+          <Image src={images.sitrak} alt="" width={960} height={640} format="webp" quality={70} loading="lazy" />
+        </div>
+        <h2 class="h3 mt-4 reveal">{tr('careers.why')}</h2>
+        <ul class="check-list mt-2 reveal" data-delay="1">
+          {why.map((w) => <li>{w}</li>)}
+        </ul>
+      </div>
+
+      <div class="careers__form reveal" data-delay="1" id="apply">
+        <h2 class="h3">{tr('careers.form.title')}</h2>
+        <form class="mt-3" data-wa={site.whatsapp.intl} data-title={tr('careers.msg')} data-source={site.domain}>
+          <div class="form-grid">
+            <div class="field span-2">
+              <label for="c-role">{tr('careers.role')}</label>
+              <select id="c-role" name="role" required data-label={tr('careers.role')}>
+                <option value="driver">{tr('careers.role.driver')}</option>
+                <option value="mechanic">{tr('careers.role.mechanic')}</option>
+                <option value="ops">{tr('careers.role.ops')}</option>
+                <option value="other">{tr('careers.role.other')}</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="c-name">{tr('quote.name')}</label>
+              <input id="c-name" name="name" type="text" required data-label={tr('quote.name')} />
+            </div>
+            <div class="field">
+              <label for="c-phone">{tr('quote.phone')}</label>
+              <input id="c-phone" name="phone" type="tel" inputmode="tel" required data-label={tr('quote.phone')} dir="ltr" />
+            </div>
+            <div class="field">
+              <label for="c-city">{tr('careers.city')}</label>
+              <input id="c-city" name="city" type="text" data-label={tr('careers.city')} />
+            </div>
+            <div class="field">
+              <label for="c-exp">{tr('careers.experience')}</label>
+              <input id="c-exp" name="experience" type="text" inputmode="numeric" data-label={tr('careers.experience')} />
+            </div>
+            <div class="field span-2">
+              <label for="c-lic">{tr('careers.license')}</label>
+              <input id="c-lic" name="license" type="text" data-label={tr('careers.license')} placeholder={lang === 'ar' ? 'رخصة نقل ثقيل / عام' : 'Heavy / general licence'} />
+            </div>
+            <div class="field span-2">
+              <label for="c-notes">{tr('quote.notes')}</label>
+              <textarea id="c-notes" name="notes" data-label={tr('quote.notes')} />
+            </div>
+            <div class="field span-2">
+              <button type="submit" class="btn btn--gold btn--lg btn--block"><Icon name="whatsapp" />{tr('cta.send')}</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .careers__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: start;
+  }
+  .careers__media {
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+  .careers__form {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    padding: clamp(22px, 3vw, 36px);
+  }
+  @media (max-width: 900px) {
+    .careers__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

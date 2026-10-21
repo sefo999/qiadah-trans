@@ -1,0 +1,164 @@
+---
+import Icon from './Icon.astro';
+import { t } from '../i18n/ui';
+import type { Lang } from '../i18n/utils';
+import { site } from '../data/site';
+import { services } from '../data/services';
+
+interface Props {
+  lang: Lang;
+  compact?: boolean;
+  preset?: string; // service slug
+  source?: string;
+}
+const { lang, compact = false, preset, source } = Astro.props;
+const tr = t(lang);
+const types = services.map((s) => ({ value: s.slug, label: s.title[lang], icon: s.icon }));
+const title = tr('quote.msg');
+---
+
+<form class:list={['qform', { 'qform--compact': compact }]} data-wa={site.whatsapp.intl} data-title={title} data-source={source || site.domain} novalidate={false}>
+  {!compact && (
+    <div class="qform__types" data-type-tabs role="group" aria-label={tr('quote.type')}>
+      {types.map((ty) => (
+        <button type="button" data-value={ty.value} class:list={{ 'is-active': preset === ty.value }}>
+          <Icon name={ty.icon} />
+          <span>{ty.label}</span>
+        </button>
+      ))}
+    </div>
+  )}
+
+  <div class="form-grid">
+    <div class="field">
+      <label for={`q-type-${compact ? 'c' : 'f'}`}>{tr('quote.type')}</label>
+      <select id={`q-type-${compact ? 'c' : 'f'}`} name="type" required data-label={tr('quote.type')}>
+        <option value="" disabled selected={!preset}>{tr('quote.choose')}</option>
+        {types.map((ty) => (
+          <option value={ty.value} selected={preset === ty.value}>{ty.label}</option>
+        ))}
+      </select>
+    </div>
+    <div class="field">
+      <label for={`q-cargo-${compact ? 'c' : 'f'}`}>{tr('quote.cargo')}</label>
+      <input id={`q-cargo-${compact ? 'c' : 'f'}`} name="cargo" type="text" data-label={tr('quote.cargo')} placeholder={lang === 'ar' ? 'مثال: أعلاف، حاويات 40 قدماً' : 'e.g. feed, 40ft containers'} />
+    </div>
+    <div class="field">
+      <label for={`q-from-${compact ? 'c' : 'f'}`}>{tr('quote.from')}</label>
+      <input id={`q-from-${compact ? 'c' : 'f'}`} name="from" type="text" required data-label={tr('quote.from')} placeholder={lang === 'ar' ? 'ميناء الدمام' : 'Dammam Port'} />
+    </div>
+    <div class="field">
+      <label for={`q-to-${compact ? 'c' : 'f'}`}>{tr('quote.to')}</label>
+      <input id={`q-to-${compact ? 'c' : 'f'}`} name="to" type="text" required data-label={tr('quote.to')} placeholder={lang === 'ar' ? 'الرياض' : 'Riyadh'} />
+    </div>
+    {!compact && (
+      <>
+        <div class="field">
+          <label for="q-qty">{tr('quote.qty')}</label>
+          <input id="q-qty" name="qty" type="text" data-label={tr('quote.qty')} />
+        </div>
+        <div class="field">
+          <label for="q-date">{tr('quote.date')}</label>
+          <input id="q-date" name="date" type="date" data-label={tr('quote.date')} />
+        </div>
+        <div class="field">
+          <label for="q-name">{tr('quote.name')}</label>
+          <input id="q-name" name="name" type="text" required data-label={tr('quote.name')} />
+        </div>
+        <div class="field">
+          <label for="q-company">{tr('quote.company')}</label>
+          <input id="q-company" name="company" type="text" data-label={tr('quote.company')} />
+        </div>
+        <div class="field">
+          <label for="q-phone">{tr('quote.phone')}</label>
+          <input id="q-phone" name="phone" type="tel" inputmode="tel" required data-label={tr('quote.phone')} dir="ltr" />
+        </div>
+        <div class="field span-2">
+          <label for="q-notes">{tr('quote.notes')}</label>
+          <textarea id="q-notes" name="notes" data-label={tr('quote.notes')} />
+        </div>
+      </>
+    )}
+    {compact && (
+      <div class="field">
+        <label for="q-phone-c">{tr('quote.phone')}</label>
+        <input id="q-phone-c" name="phone" type="tel" inputmode="tel" required data-label={tr('quote.phone')} dir="ltr" placeholder="05xxxxxxxx" />
+      </div>
+    )}
+    <div class="field span-2 qform__submit">
+      <button type="submit" class="btn btn--gold btn--lg btn--block">
+        <Icon name="whatsapp" />
+        {tr('cta.send')}
+      </button>
+      <small>{tr('quote.subtitle')}</small>
+    </div>
+  </div>
+</form>
+
+<style>
+  .qform__types {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .qform__types button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 8px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--line);
+    background: #fff;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--navy);
+    text-align: center;
+    line-height: 1.25;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  }
+  .qform__types button :global(svg) {
+    width: 28px;
+    height: 28px;
+    color: var(--gold);
+  }
+  .qform__types button:hover {
+    transform: translateY(-2px);
+    border-color: var(--gold);
+  }
+  .qform__types button.is-active {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+  .qform__types button.is-active :global(svg) {
+    color: var(--gold-light);
+  }
+  @media (max-width: 900px) {
+    .qform__types {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (max-width: 480px) {
+    .qform__types {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .qform__submit {
+    margin-top: 6px;
+    align-items: center;
+    text-align: center;
+  }
+  .qform__submit small {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .qform--compact .form-grid {
+    gap: 12px;
+  }
+  .qform--compact .qform__submit {
+    margin-top: 2px;
+  }
+</style>

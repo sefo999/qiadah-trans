@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://qiadah.sa/sitemap-index.xml

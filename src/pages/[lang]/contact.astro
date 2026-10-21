@@ -1,0 +1,178 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import QuoteForm from '../../components/QuoteForm.astro';
+import Inquiry from '../../components/Inquiry.astro';
+import FAQ from '../../components/FAQ.astro';
+import { t } from '../../i18n/ui';
+import { staticLangPaths, type Lang } from '../../i18n/utils';
+import { site, waLink } from '../../data/site';
+import { images } from '../../data/images';
+
+export const getStaticPaths = staticLangPaths;
+const lang = Astro.params.lang as Lang;
+const tr = t(lang);
+const wa = waLink(lang === 'ar' ? 'السلام عليكم، أرغب في الاستفسار عن خدماتكم.' : 'Hello, I would like to ask about your services.');
+---
+
+<Base lang={lang} title={tr('meta.contact')} description={tr('contact.text')} slug="contact">
+  <PageHero lang={lang} eyebrow={tr('contact.eyebrow')} title={tr('contact.title')} text={tr('contact.text')} crumbs={[{ label: tr('nav.contact') }]} image={images.hopper} focus="50% 45%" />
+
+  <section class="section contact">
+    <div class="container contact__inner">
+      <div class="contact__form reveal" id="quote">
+        <span class="eyebrow">{tr('cta.quote')}</span>
+        <h2 class="h2">{tr('quote.title')}</h2>
+        <p class="lead">{tr('quote.subtitle')}</p>
+        <div class="mt-4">
+          <QuoteForm lang={lang} source={lang === 'ar' ? 'من صفحة التواصل' : 'From the contact page'} />
+        </div>
+      </div>
+
+      <aside class="contact__aside">
+        <ul class="contact__cards reveal" data-delay="1">
+          <li>
+            <a href={site.phone.tel}>
+              <span class="contact__icon"><Icon name="phone" /></span>
+              <div>
+                <small>{tr('footer.unified')}</small>
+                <strong class="num" dir="ltr">{site.phone.display}</strong>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href={wa} target="_blank" rel="noopener">
+              <span class="contact__icon contact__icon--wa"><Icon name="whatsapp" /></span>
+              <div>
+                <small>{tr('footer.whatsapp')}</small>
+                <strong class="num" dir="ltr">{site.whatsapp.display}</strong>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href={`mailto:${site.email}`}>
+              <span class="contact__icon"><Icon name="mail" /></span>
+              <div>
+                <small>{tr('footer.email')}</small>
+                <strong class="latin" dir="ltr">{site.email}</strong>
+              </div>
+            </a>
+          </li>
+          <li>
+            <div class="contact__static">
+              <span class="contact__icon"><Icon name="clock" /></span>
+              <div>
+                <small>{tr('contact.hours')}</small>
+                <strong>{tr('contact.hours.text')}</strong>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="contact__static">
+              <span class="contact__icon"><Icon name="pin" /></span>
+              <div>
+                <small>{lang === 'ar' ? 'المقر' : 'Head office'}</small>
+                <strong>{site.address[lang]}</strong>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div class="contact__social reveal" data-delay="2">
+          <span>{tr('contact.follow')}</span>
+          <a href={site.instagram.url} target="_blank" rel="noopener"><Icon name="instagram" /><span class="latin">{site.instagram.handle}</span></a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <Inquiry lang={lang} />
+  <FAQ lang={lang} />
+</Base>
+
+<style>
+  .contact__inner {
+    display: grid;
+    grid-template-columns: 1.3fr 0.8fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: start;
+  }
+  .contact__form {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    padding: clamp(22px, 3vw, 36px);
+    scroll-margin-top: calc(var(--header-h) + 24px);
+  }
+  .contact__cards li + li {
+    margin-top: 12px;
+  }
+  .contact__cards a,
+  .contact__static {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .contact__cards a:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+  }
+  .contact__icon {
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: var(--navy);
+    color: var(--gold-light);
+  }
+  .contact__icon--wa {
+    background: #25d366;
+    color: #fff;
+  }
+  .contact__icon :global(svg) {
+    width: 24px;
+    height: 24px;
+  }
+  .contact__cards small {
+    display: block;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+  .contact__cards strong {
+    color: var(--navy);
+    font-size: 1.05rem;
+  }
+  .contact__social {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .contact__social a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: var(--gold-pale);
+    color: var(--navy);
+  }
+  .contact__social :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+  @media (max-width: 1024px) {
+    .contact__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

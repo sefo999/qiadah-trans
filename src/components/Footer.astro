@@ -1,0 +1,218 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { t } from '../i18n/ui';
+import { path, type Lang } from '../i18n/utils';
+import { site, waLink } from '../data/site';
+import { services } from '../data/services';
+import { sectors } from '../data/sectors';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const tr = t(lang);
+const year = new Date().getFullYear();
+const wa = waLink(lang === 'ar' ? 'السلام عليكم، أرغب في الاستفسار عن خدماتكم.' : 'Hello, I would like to ask about your services.');
+---
+
+<footer class="footer contour contour--dark">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <Logo lang={lang} variant="light" size={48} />
+        <p>{tr('footer.about')}</p>
+        <div class="footer__social">
+          <a href={site.instagram.url} target="_blank" rel="noopener" aria-label="Instagram"><Icon name="instagram" /></a>
+          <a href={wa} target="_blank" rel="noopener" aria-label="WhatsApp"><Icon name="whatsapp" /></a>
+          <a href={`mailto:${site.email}`} aria-label="Email"><Icon name="mail" /></a>
+        </div>
+      </div>
+
+      <div>
+        <h4>{tr('footer.links')}</h4>
+        <ul>
+          <li><a href={path(lang, 'about')}>{tr('nav.about')}</a></li>
+          <li><a href={path(lang, 'fleet')}>{tr('nav.fleet')}</a></li>
+          <li><a href={path(lang, 'sectors')}>{tr('nav.sectors')}</a></li>
+          <li><a href={path(lang, 'careers')}>{tr('nav.careers')}</a></li>
+          <li><a href={path(lang, 'contact')}>{tr('nav.contact')}</a></li>
+          <li><a href={path(lang, 'contact') + '#inquiry'}>{tr('cta.inquiry')}</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>{tr('footer.services')}</h4>
+        <ul>
+          {services.map((s) => (
+            <li><a href={path(lang, `services/${s.slug}`)}>{s.title[lang]}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h4>{tr('footer.sectors')}</h4>
+        <ul>
+          {sectors.map((s) => (
+            <li><a href={path(lang, `sectors/${s.slug}`)}>{s.title[lang]}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="footer__contact">
+        <h4>{tr('footer.contact')}</h4>
+        <ul>
+          <li>
+            <Icon name="phone" />
+            <div>
+              <small>{tr('footer.unified')}</small>
+              <a href={site.phone.tel} class="num" dir="ltr">{site.phone.display}</a>
+            </div>
+          </li>
+          <li>
+            <Icon name="whatsapp" />
+            <div>
+              <small>{tr('footer.whatsapp')}</small>
+              <a href={wa} target="_blank" rel="noopener" class="num" dir="ltr">{site.whatsapp.display}</a>
+            </div>
+          </li>
+          <li>
+            <Icon name="mail" />
+            <div>
+              <small>{tr('footer.email')}</small>
+              <a href={`mailto:${site.email}`} class="latin" dir="ltr">{site.email}</a>
+            </div>
+          </li>
+          <li>
+            <Icon name="pin" />
+            <div>
+              <small>{lang === 'ar' ? 'المقر' : 'Head office'}</small>
+              <span>{site.address[lang]}</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>© <span class="num">{year}</span> {site.name[lang]}. {tr('footer.rights')}.</span>
+      {site.cr && <span>{tr('footer.cr')}: <span class="num">{site.cr}</span></span>}
+      <span class="latin">{site.domain}</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--navy-ink);
+    color: rgba(255, 255, 255, 0.8);
+    padding: clamp(56px, 7vw, 88px) 0 32px;
+    margin-top: 0;
+  }
+  .footer__grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1.3fr 1.1fr 1.3fr;
+    gap: 40px 32px;
+  }
+  .footer h4 {
+    color: #fff;
+    font-size: 1.05rem;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    position: relative;
+  }
+  .footer h4::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    bottom: 0;
+    width: 32px;
+    height: 3px;
+    background: var(--gold);
+    border-radius: 3px;
+  }
+  .footer ul li + li {
+    margin-top: 10px;
+  }
+  .footer ul a {
+    transition: color 0.2s ease;
+  }
+  .footer ul a:hover {
+    color: var(--gold-light);
+  }
+  .footer__brand p {
+    margin: 20px 0;
+    font-size: 0.96rem;
+    line-height: 1.8;
+  }
+  .footer__social {
+    display: flex;
+    gap: 10px;
+  }
+  .footer__social a {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.08);
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .footer__social a:hover {
+    background: var(--gold);
+    color: var(--navy-ink);
+  }
+  .footer__social :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+  .footer__contact li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .footer__contact li + li {
+    margin-top: 16px;
+  }
+  .footer__contact :global(svg) {
+    width: 22px;
+    height: 22px;
+    flex: none;
+    color: var(--gold-light);
+    margin-top: 4px;
+  }
+  .footer__contact small {
+    display: block;
+    font-size: 0.78rem;
+    opacity: 0.6;
+  }
+  .footer__contact a,
+  .footer__contact span {
+    font-weight: 700;
+    color: #fff;
+  }
+  .footer__bottom {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line-dark);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 32px;
+    justify-content: space-between;
+    font-size: 0.88rem;
+    opacity: 0.75;
+  }
+  @media (max-width: 1024px) {
+    .footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer__brand {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 560px) {
+    .footer__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

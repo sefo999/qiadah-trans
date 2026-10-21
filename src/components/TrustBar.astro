@@ -1,0 +1,98 @@
+---
+import Icon from './Icon.astro';
+import { t } from '../i18n/ui';
+import type { Lang } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const tr = t(lang);
+const items = [
+  { icon: 'vision', title: tr('trust.vision'), text: tr('trust.vision.text') },
+  { icon: 'clock', title: tr('trust.response'), text: tr('trust.response.text') },
+  { icon: 'support', title: tr('trust.support'), text: tr('trust.support.text') },
+  { icon: 'shield', title: tr('trust.safety'), text: tr('trust.safety.text') },
+];
+---
+
+<section class="trust">
+  <div class="container">
+    <ul class="trust__list">
+      {items.map((it, i) => (
+        <li class="reveal" data-delay={String(i + 1)}>
+          <span class="trust__icon"><Icon name={it.icon} /></span>
+          <div>
+            <strong>{it.title}</strong>
+            <span>{it.text}</span>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .trust {
+    background: var(--cream);
+    border-bottom: 1px solid var(--line);
+  }
+  .trust__list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 22px 0;
+  }
+  .trust__list li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+  }
+  .trust__list li + li {
+    border-inline-start: 1px solid var(--line);
+  }
+  .trust__icon {
+    flex: none;
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: var(--navy);
+    color: var(--gold-light);
+  }
+  .trust__icon :global(svg) {
+    width: 24px;
+    height: 24px;
+  }
+  .trust__list strong {
+    display: block;
+    color: var(--navy);
+    font-size: 0.98rem;
+  }
+  .trust__list span:last-child {
+    display: block;
+    color: var(--muted);
+    font-size: 0.86rem;
+    line-height: 1.4;
+  }
+  @media (max-width: 1024px) {
+    .trust__list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .trust__list li:nth-child(3) {
+      border-inline-start: 0;
+    }
+  }
+  @media (max-width: 560px) {
+    .trust__list {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+    .trust__list li + li {
+      border-inline-start: 0;
+      border-top: 1px solid var(--line);
+    }
+  }
+</style>

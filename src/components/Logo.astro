@@ -1,0 +1,64 @@
+---
+import type { Lang } from '../i18n/utils';
+import markNavy from '../assets/brand/mark.png';
+import markWhite from '../assets/brand/mark-white.png';
+import wordNavy from '../assets/brand/word-navy.png';
+import wordWhite from '../assets/brand/word-white.png';
+
+interface Props {
+  lang: Lang;
+  variant?: 'light' | 'dark';
+  size?: number; // mark height in px
+}
+const { lang, variant = 'dark', size = 44 } = Astro.props;
+const mark = variant === 'light' ? markWhite : markNavy;
+const word = variant === 'light' ? wordWhite : wordNavy;
+const tagline = lang === 'ar' ? 'للنقليات' : 'Logistics';
+---
+
+<span class="logo" style={`--s:${size}px`} dir="ltr">
+  <img class="logo__mark" src={mark.src} width={mark.width} height={mark.height} alt="" />
+  <span class="logo__word">
+    <img src={word.src} width={word.width} height={word.height} alt="Qiadah قيادة" />
+    <span class:list={['logo__tag', { 'logo__tag--en': lang !== 'ar' }]} dir={lang === 'ar' ? 'rtl' : 'ltr'}>{tagline}</span>
+  </span>
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--s) * 0.2);
+    line-height: 1;
+  }
+  .logo__mark {
+    height: var(--s);
+    width: auto;
+    flex: none;
+  }
+  .logo__word {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: calc(var(--s) * 0.08);
+  }
+  .logo__word img {
+    height: calc(var(--s) * 0.62);
+    width: auto;
+  }
+  /* Same typeface as the wordmark: 29LT Bukra Bold, gold, centred under the name */
+  .logo__tag {
+    font-family: '29LT Bukra', var(--font-ar);
+    font-weight: 700;
+    color: #c9962f;
+    font-size: calc(var(--s) * 0.36);
+    line-height: 1;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+  .logo__tag--en {
+    font-size: calc(var(--s) * 0.3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+</style>

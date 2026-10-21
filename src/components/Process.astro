@@ -1,0 +1,100 @@
+---
+import { t } from '../i18n/ui';
+import type { Lang } from '../i18n/utils';
+import { process } from '../data/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const tr = t(lang);
+---
+
+<section class="section section--cream process contour">
+  <div class="container">
+    <div class="section-head section-head--center reveal">
+      <span class="eyebrow">{tr('process.eyebrow')}</span>
+      <h2 class="h2">{tr('process.title')}</h2>
+    </div>
+    <ol class="process__steps">
+      {process.map((p, i) => (
+        <li class="reveal" data-delay={String(i + 1)}>
+          <span class="process__num num">{i + 1}</span>
+          <h3>{p.title[lang]}</h3>
+          <p>{p.text[lang]}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .process__steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    position: relative;
+  }
+  .process__steps::before {
+    content: '';
+    position: absolute;
+    top: 28px;
+    inset-inline: 12%;
+    height: 2px;
+    background: repeating-linear-gradient(to right, var(--gold) 0 10px, transparent 10px 18px);
+    opacity: 0.6;
+  }
+  .process__steps li {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0 22px 24px;
+    margin-top: 28px;
+    position: relative;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .process__steps li:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+  }
+  .process__num {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--gold-light);
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin: -28px auto 16px;
+    border: 4px solid var(--cream);
+    box-shadow: 0 6px 16px rgba(20, 29, 66, 0.25);
+  }
+  .process__steps h3 {
+    font-size: 1.1rem;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .process__steps p {
+    font-size: 0.95rem;
+    color: var(--muted);
+    text-align: center;
+  }
+  @media (max-width: 1024px) {
+    .process__steps {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .process__steps::before {
+      display: none;
+    }
+  }
+  @media (max-width: 560px) {
+    .process__steps {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

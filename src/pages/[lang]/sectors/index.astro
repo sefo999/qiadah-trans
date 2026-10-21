@@ -1,0 +1,23 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHero from '../../../components/PageHero.astro';
+import SectorsGrid from '../../../components/SectorsGrid.astro';
+import ServicesGrid from '../../../components/ServicesGrid.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import { t } from '../../../i18n/ui';
+import { staticLangPaths, type Lang } from '../../../i18n/utils';
+import { images } from '../../../data/images';
+
+export const getStaticPaths = staticLangPaths;
+const lang = Astro.params.lang as Lang;
+const tr = t(lang);
+---
+
+<Base lang={lang} title={tr('meta.sectors')} description={tr('sectors.text')} slug="sectors">
+  <PageHero lang={lang} eyebrow={tr('sectors.eyebrow')} title={tr('sectors.title')} text={tr('sectors.text')} crumbs={[{ label: tr('nav.sectors') }]} image={images.container} focus="50% 40%" />
+  <SectorsGrid lang={lang} heading={false} cream={false} />
+  <div class="section--cream">
+    <ServicesGrid lang={lang} />
+  </div>
+  <CtaBand lang={lang} />
+</Base>

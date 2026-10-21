@@ -1,0 +1,32 @@
+---
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/Hero.astro';
+import TrustBar from '../../components/TrustBar.astro';
+import ServicesGrid from '../../components/ServicesGrid.astro';
+import WhyUs from '../../components/WhyUs.astro';
+import SectorsGrid from '../../components/SectorsGrid.astro';
+import CoverageMap from '../../components/CoverageMap.astro';
+import Process from '../../components/Process.astro';
+import Inquiry from '../../components/Inquiry.astro';
+import FAQ from '../../components/FAQ.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { t } from '../../i18n/ui';
+import { staticLangPaths, type Lang } from '../../i18n/utils';
+
+export const getStaticPaths = staticLangPaths;
+const lang = Astro.params.lang as Lang;
+const tr = t(lang);
+---
+
+<Base lang={lang} title={tr('meta.home')} description={tr('meta.home.desc')} transparentHeader>
+  <Hero lang={lang} />
+  <TrustBar lang={lang} />
+  <ServicesGrid lang={lang} />
+  <WhyUs lang={lang} />
+  <SectorsGrid lang={lang} />
+  <CoverageMap lang={lang} />
+  <Process lang={lang} />
+  <Inquiry lang={lang} />
+  <FAQ lang={lang} limit={4} />
+  <CtaBand lang={lang} />
+</Base>

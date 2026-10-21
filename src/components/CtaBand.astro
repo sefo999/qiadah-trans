@@ -1,0 +1,90 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { t } from '../i18n/ui';
+import { path, type Lang } from '../i18n/utils';
+import { site, waLink } from '../data/site';
+import { images } from '../data/images';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const tr = t(lang);
+const wa = waLink(lang === 'ar' ? 'السلام عليكم، أرغب في طلب عرض سعر لنقل شحنة.' : 'Hello, I would like to request a quote for a shipment.');
+---
+
+<section class="cta-band">
+  <div class="cta-band__media">
+    <Image src={images.hopperRear} alt="" width={1600} format="webp" quality={60} loading="lazy" />
+  </div>
+  <div class="container cta-band__inner reveal">
+    <div>
+      <h2 class="h2">{tr('cta.band.title')}</h2>
+      <p class="lead">{tr('cta.band.text')}</p>
+    </div>
+    <div class="cta-band__actions">
+      <a href={path(lang, 'contact') + '#quote'} class="btn btn--gold btn--lg"><Icon name="send" />{tr('cta.quote')}</a>
+      <a href={wa} class="btn btn--wa btn--lg" target="_blank" rel="noopener"><Icon name="whatsapp" />{tr('cta.whatsapp')}</a>
+      <a href={site.phone.tel} class="btn btn--outline-light btn--lg"><Icon name="phone" /><span class="num">{site.phone.display}</span></a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-band {
+    position: relative;
+    color: #fff;
+    padding: clamp(56px, 8vw, 96px) 0;
+    overflow: hidden;
+    background: var(--navy-ink);
+  }
+  .cta-band__media {
+    position: absolute;
+    inset: 0;
+  }
+  .cta-band__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.28;
+  }
+  .cta-band__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(13, 19, 48, 0.95), rgba(13, 19, 48, 0.6));
+  }
+  .cta-band__inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 32px;
+    align-items: center;
+  }
+  .cta-band h2 {
+    color: #fff;
+  }
+  .cta-band .lead {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .cta-band__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: flex-end;
+  }
+  @media (max-width: 900px) {
+    .cta-band__inner {
+      grid-template-columns: 1fr;
+    }
+    .cta-band__actions {
+      justify-content: flex-start;
+    }
+  }
+  @media (max-width: 560px) {
+    .cta-band__actions .btn {
+      width: 100%;
+    }
+  }
+</style>

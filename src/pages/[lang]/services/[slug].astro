@@ -1,0 +1,158 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../../layouts/Base.astro';
+import PageHero from '../../../components/PageHero.astro';
+import Icon from '../../../components/Icon.astro';
+import QuoteForm from '../../../components/QuoteForm.astro';
+import ServicesGrid from '../../../components/ServicesGrid.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import { t } from '../../../i18n/ui';
+import { locales, path, type Lang } from '../../../i18n/utils';
+import { services } from '../../../data/services';
+import { sectorBySlug } from '../../../data/sectors';
+import { images } from '../../../data/images';
+
+export function getStaticPaths() {
+  return locales.flatMap((lang) => services.map((s) => ({ params: { lang, slug: s.slug }, props: { service: s } })));
+}
+const lang = Astro.params.lang as Lang;
+const { service } = Astro.props;
+const tr = t(lang);
+const related = service.sectors.map(sectorBySlug).filter(Boolean);
+---
+
+<Base lang={lang} title={service.title[lang]} description={service.short[lang]} slug={`services/${service.slug}`}>
+  <PageHero
+    lang={lang}
+    eyebrow={tr('services.eyebrow')}
+    title={service.title[lang]}
+    text={service.short[lang]}
+    crumbs={[{ label: tr('nav.services'), href: path(lang, 'services') }, { label: service.title[lang] }]}
+    image={images[service.image]}
+    focus="50% 65%"
+  >
+    <div class="row mt-3">
+      <span class="badge badge--dark"><Icon name={service.icon} />{service.spec[lang]}</span>
+      <a href="#quote" class="btn btn--gold"><Icon name="send" />{tr('cta.quote')}</a>
+    </div>
+  </PageHero>
+
+  <section class="section svc-detail">
+    <div class="container svc-detail__inner">
+      <div class="svc-detail__main">
+        <div class="svc-detail__media reveal">
+          <Image src={images[service.image]} alt={service.title[lang]} width={1200} height={720} format="webp" quality={72} loading="eager" />
+        </div>
+        <p class="lead reveal" data-delay="1">{service.intro[lang]}</p>
+
+        <h2 class="h3 mt-5 reveal">{tr('service.features')}</h2>
+        <ul class="check-list mt-2 reveal" data-delay="1">
+          {service.bullets[lang].map((b) => <li>{b}</li>)}
+        </ul>
+
+        <h2 class="h3 mt-5 reveal">{tr('service.cargo')}</h2>
+        <div class="row mt-2 reveal" data-delay="1">
+          {service.cargo[lang].map((c) => <span class="chip">{c}</span>)}
+        </div>
+
+        <h2 class="h3 mt-5 reveal">{tr('service.sectors')}</h2>
+        <div class="grid grid-2 mt-2">
+          {related.map((s, i) => (
+            <a href={path(lang, `sectors/${s!.slug}`)} class="card svc-detail__sector reveal" data-delay={String(i + 1)}>
+              <span class="card__icon card__icon--gold"><Icon name={s!.icon} /></span>
+              <div>
+                <h3 class="h3">{s!.title[lang]}</h3>
+                <p>{s!.short[lang]}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <aside class="svc-detail__aside" id="quote">
+        <div class="svc-detail__quote reveal" data-delay="2">
+          <h2 class="h3">{tr('service.quoteTitle')}</h2>
+          <p class="mt-1">{tr('quote.subtitle')}</p>
+          <div class="mt-3">
+            <QuoteForm lang={lang} compact preset={service.slug} source={service.title[lang]} />
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section--cream">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">{tr('service.other')}</span>
+        <h2 class="h2">{tr('services.title')}</h2>
+      </div>
+    </div>
+    <ServicesGrid lang={lang} heading={false} exclude={service.slug} />
+  </section>
+
+  <CtaBand lang={lang} />
+</Base>
+
+<style>
+  .svc-detail__inner {
+    display: grid;
+    grid-template-columns: 1.4fr 0.8fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: start;
+  }
+  .svc-detail__media {
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 28px;
+  }
+  .svc-detail__media img {
+    width: 100%;
+    height: auto;
+  }
+  .svc-detail__sector {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 22px;
+  }
+  .svc-detail__sector .card__icon {
+    margin: 0;
+    flex: none;
+    width: 48px;
+    height: 48px;
+  }
+  .svc-detail__sector h3 {
+    font-size: 1.05rem;
+  }
+  .svc-detail__sector p {
+    font-size: 0.92rem;
+  }
+  .svc-detail__aside {
+    position: sticky;
+    top: calc(var(--header-h) + 24px);
+    scroll-margin-top: calc(var(--header-h) + 24px);
+  }
+  .svc-detail__quote {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 26px;
+  }
+  .svc-detail__quote p {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .section--cream :global(.services) {
+    padding-top: 0;
+  }
+  @media (max-width: 1024px) {
+    .svc-detail__inner {
+      grid-template-columns: 1fr;
+    }
+    .svc-detail__aside {
+      position: static;
+    }
+  }
+</style>

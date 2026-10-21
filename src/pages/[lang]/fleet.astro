@@ -1,0 +1,154 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import Stats from '../../components/Stats.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { t } from '../../i18n/ui';
+import { path, staticLangPaths, type Lang } from '../../i18n/utils';
+import { services } from '../../data/services';
+import { gallery, images } from '../../data/images';
+
+export const getStaticPaths = staticLangPaths;
+const lang = Astro.params.lang as Lang;
+const tr = t(lang);
+---
+
+<Base lang={lang} title={tr('meta.fleet')} description={tr('fleet.text')} slug="fleet">
+  <PageHero lang={lang} eyebrow={tr('fleet.eyebrow')} title={tr('fleet.title')} text={tr('fleet.text')} crumbs={[{ label: tr('nav.fleet') }]} image={images.hopperRear} focus="50% 60%" />
+
+  <section class="section">
+    <div class="container">
+      <Stats lang={lang} />
+    </div>
+  </section>
+
+  <section class="section section--cream fleet contour">
+    <div class="container">
+      {services.map((s, i) => (
+        <article class:list={['fleet__item', 'reveal', { 'fleet__item--flip': i % 2 === 1 }]}>
+          <div class="fleet__media">
+            <Image src={images[s.image]} alt={s.title[lang]} width={900} height={600} format="webp" quality={70} loading="lazy" />
+            <span class="fleet__spec">{s.spec[lang]}</span>
+          </div>
+          <div class="fleet__copy">
+            <span class="card__icon"><Icon name={s.icon} /></span>
+            <h2 class="h2">{s.title[lang]}</h2>
+            <p class="lead">{s.short[lang]}</p>
+            <h3 class="fleet__sub">{tr('fleet.cargo')}</h3>
+            <div class="row">{s.cargo[lang].map((c) => <span class="chip">{c}</span>)}</div>
+            <a href={path(lang, `services/${s.slug}`)} class="btn btn--navy mt-3">{tr('cta.details')}<Icon name="arrow" class="icon-arrow" /></a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">{tr('fleet.gallery')}</span>
+        <h2 class="h2">{tr('fleet.gallery.text')}</h2>
+      </div>
+      <div class="gallery">
+        {gallery.map((g, i) => (
+          <figure class="reveal" data-delay={String((i % 2) + 1)}>
+            <Image src={g.src} alt={g.alt[lang]} width={1000} height={700} format="webp" quality={72} loading="lazy" />
+            <figcaption>{g.alt[lang]}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} />
+</Base>
+
+<style>
+  .fleet__item {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, 4vw, 56px);
+    align-items: center;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    padding: 24px;
+  }
+  .fleet__item + .fleet__item {
+    margin-top: 28px;
+  }
+  .fleet__item--flip .fleet__media {
+    order: 2;
+  }
+  .fleet__media {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+  }
+  .fleet__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .fleet__spec {
+    position: absolute;
+    inset-inline-start: 16px;
+    top: 16px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--navy-ink);
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+  .fleet__copy {
+    padding: 8px 12px;
+  }
+  .fleet__sub {
+    font-size: 0.95rem;
+    color: var(--gold);
+    margin: 22px 0 10px;
+  }
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .gallery figure {
+    margin: 0;
+    border-radius: 22px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow);
+  }
+  .gallery img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 10 / 7;
+  }
+  .gallery figcaption {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    padding: 36px 18px 14px;
+    background: linear-gradient(to top, rgba(13, 19, 48, 0.85), transparent);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+  @media (max-width: 900px) {
+    .fleet__item {
+      grid-template-columns: 1fr;
+    }
+    .fleet__item--flip .fleet__media {
+      order: 0;
+    }
+    .gallery {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

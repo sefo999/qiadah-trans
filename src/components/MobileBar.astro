@@ -1,0 +1,90 @@
+---
+import Icon from './Icon.astro';
+import { t } from '../i18n/ui';
+import { path, type Lang } from '../i18n/utils';
+import { site, waLink } from '../data/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const tr = t(lang);
+const wa = waLink(lang === 'ar' ? 'السلام عليكم، أرغب في طلب عرض سعر لنقل شحنة.' : 'Hello, I would like to request a quote for a shipment.');
+---
+
+<div class="mbar" role="navigation" aria-label={lang === 'ar' ? 'إجراءات سريعة' : 'Quick actions'}>
+  <a href={site.phone.tel}><Icon name="phone" /><span>{tr('cta.call')}</span></a>
+  <a href={wa} target="_blank" rel="noopener" class="mbar__wa"><Icon name="whatsapp" /><span>{tr('cta.whatsapp')}</span></a>
+  <a href={path(lang, 'contact') + '#quote'} class="mbar__quote"><Icon name="send" /><span>{tr('cta.quote')}</span></a>
+</div>
+
+<a href={wa} target="_blank" rel="noopener" class="wa-float" aria-label="WhatsApp">
+  <Icon name="whatsapp" />
+</a>
+
+<style>
+  .mbar {
+    display: none;
+  }
+  .wa-float {
+    position: fixed;
+    inset-inline-end: 22px;
+    bottom: 22px;
+    z-index: 90;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: #25d366;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 12px 30px rgba(37, 211, 102, 0.45);
+    transition: transform 0.2s ease;
+  }
+  .wa-float:hover {
+    transform: scale(1.08);
+  }
+  .wa-float :global(svg) {
+    width: 30px;
+    height: 30px;
+  }
+  @media (max-width: 768px) {
+    .wa-float {
+      display: none;
+    }
+    .mbar {
+      position: fixed;
+      inset-inline: 0;
+      bottom: 0;
+      z-index: 90;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.4fr;
+      background: #fff;
+      border-top: 1px solid var(--line);
+      box-shadow: 0 -8px 24px rgba(20, 29, 66, 0.12);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .mbar a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 10px 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .mbar :global(svg) {
+      width: 22px;
+      height: 22px;
+    }
+    .mbar__wa {
+      color: #1ebe5a;
+    }
+    .mbar__quote {
+      background: var(--gold);
+      color: var(--navy-ink);
+    }
+  }
+</style>

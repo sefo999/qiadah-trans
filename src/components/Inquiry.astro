@@ -1,0 +1,70 @@
+---
+import Icon from './Icon.astro';
+import { t } from '../i18n/ui';
+import type { Lang } from '../i18n/utils';
+import { site } from '../data/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const tr = t(lang);
+---
+
+<section class="section section--navy inquiry" id="inquiry">
+  <div class="container inquiry__inner">
+    <div class="reveal">
+      <span class="eyebrow">{tr('cta.inquiry')}</span>
+      <h2 class="h2">{tr('inquiry.title')}</h2>
+      <p class="lead">{tr('inquiry.text')}</p>
+    </div>
+    <form class="inquiry__form reveal" data-delay="1" data-wa={site.whatsapp.intl} data-title={tr('inquiry.msg')} data-source={site.domain}>
+      <div class="field">
+        <label for="inq-ref" class="visually-hidden">{tr('inquiry.ref')}</label>
+        <input id="inq-ref" name="ref" type="text" required data-label={tr('inquiry.ref')} placeholder={tr('inquiry.ref')} dir="ltr" />
+      </div>
+      <div class="field">
+        <label for="inq-phone" class="visually-hidden">{tr('quote.phone')}</label>
+        <input id="inq-phone" name="phone" type="tel" inputmode="tel" required data-label={tr('quote.phone')} placeholder={tr('quote.phone')} dir="ltr" />
+      </div>
+      <button type="submit" class="btn btn--gold btn--lg"><Icon name="search" />{tr('cta.send')}</button>
+    </form>
+  </div>
+</section>
+
+<style>
+  .inquiry {
+    background:
+      radial-gradient(60% 120% at 100% 0%, rgba(201, 150, 47, 0.25), transparent 60%),
+      var(--navy);
+  }
+  .inquiry__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: center;
+  }
+  .inquiry__form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    padding: 16px;
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+  }
+  .inquiry__form input {
+    border: 0;
+  }
+  @media (max-width: 1024px) {
+    .inquiry__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 720px) {
+    .inquiry__form {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
